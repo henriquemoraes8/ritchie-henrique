@@ -1,0 +1,15 @@
+{
+  "execution": [
+    "local",
+    "docker"
+  ],
+  "os": {
+    "deps": [],
+    "support": [
+      "linux"
+    ]
+  },
+  "tags": [
+    "mautic", "setup", "digital-marketing", "dokku", "ssl", "mysql"
+  ]
+}

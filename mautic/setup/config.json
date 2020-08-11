@@ -1,0 +1,26 @@
+{
+  "dockerImageBuilder": "cimg/base:stable-20.04",
+  "inputs": [
+    {
+      "cache": {
+        "active": true,
+        "newLabel": "Type new name. ",
+        "qty": 6
+      },
+      "label": "Provide a project name :",
+      "name": "project",
+      "type": "text"
+    },
+    {
+      "items": [
+        "port",
+        "domain",
+        "ssl"
+      ],
+      "required": true,
+      "label": "What type of connection would you like to setup : ",
+      "name": "connection",
+      "type": "text"
+    }
+  ]
+}
