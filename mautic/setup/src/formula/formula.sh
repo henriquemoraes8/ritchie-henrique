@@ -41,7 +41,7 @@ runFormula() {
     docker pull mautic/mautic:v3
     docker tag mautic/mautic:v3 dokku/$PROJECT:latest
     dokku tags:deploy $PROJECT latest
-    dokku storage:mount $PROJECT ~/$PROJECT:/var/lib/mysql
+    dokku storage:mount $PROJECT ~/$PROJECT:/var/www/html
     echo "Successfully created $PROJECT app"
   else
     echo "Project $PROJECT already found, skipping app creation"
@@ -64,6 +64,8 @@ runFormula() {
         ssl )
           read -p "Specify the domain you would like to use and make sure the A record is set (i.e.: your.domain.com): " DOMAIN
           read -p "Provide an email for letsencrypt: " EMAIL
+          dokku domains:clear-global
+          dokku domains:clear $PROJECT
           dokku domains:add $PROJECT $DOMAIN
 
           if ! dokku letsencrypt > /dev/null 2>&1; then
