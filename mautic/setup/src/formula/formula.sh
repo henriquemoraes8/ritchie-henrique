@@ -42,6 +42,7 @@ runFormula() {
     docker tag mautic/mautic:v3 dokku/$PROJECT:latest
     dokku tags:deploy $PROJECT latest
     dokku storage:mount $PROJECT ~/$PROJECT:/var/www/html
+    dokku ps:restart $PROJECT
     echo "Successfully created $PROJECT app"
   else
     echo "Project $PROJECT already found, skipping app creation"
