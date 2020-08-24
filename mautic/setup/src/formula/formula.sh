@@ -1,8 +1,12 @@
 #!/bin/sh
 runFormula() {
+  yellow=`tput setaf 3`
+  green=`tput setaf 2`
+  blue=`tput setaf 4`
+
   # Check Docker
   if ! [ -x "$(command -v docker)" ]; then
-    echo 'No docker detected, installing...'
+    echo "\n\n${blue}🐳 No docker detected, installing...\n\n"
 
     sudo apt-get update -qq >/dev/null
     sudo apt-get install -qq -y apt-transport-https
@@ -12,7 +16,7 @@ runFormula() {
 
   # Check dokku
   if ! [ -x "$(command -v dokku)" ]; then
-    echo 'No dokku detected, installing...'
+    echo "\n\n${blue}🐳 No dokku detected, installing...\n\n"
 
     wget https://raw.githubusercontent.com/dokku/dokku/v0.21.4/bootstrap.sh;
     sudo DOKKU_TAG=v0.21.4 bash bootstrap.sh
@@ -20,11 +24,12 @@ runFormula() {
 
   # db setup
   if ! dokku mysql > /dev/null 2>&1; then
+    echo "\n\n${blue}🐳 Installing dokku mysql plugin...\n\n"
     sudo dokku plugin:install https://github.com/dokku/dokku-mysql.git mysql
   fi
   DB_NAME="${PROJECT}_db"
   dokku mysql:create $DB_NAME
-  echo "Successfully setup $DB_NAME database"
+  echo "\n\n${green}✅ Successfully setup $DB_NAME database\n\n"
   DB_DSN=$(dokku mysql:info $DB_NAME | grep Dsn)
   HOST_NAME=$(echo $DB_DSN | cut -d @ -f 2 | cut -d / -f 1)
   PASSWORD=$(echo $DB_DSN | cut -d @ -f 1 | cut -d : -f 4)
@@ -43,24 +48,22 @@ runFormula() {
     dokku tags:deploy $PROJECT latest
     dokku storage:mount $PROJECT ~/$PROJECT:/var/www/html
     dokku ps:restart $PROJECT
-    echo "Successfully created $PROJECT app"
+    echo "\n\n${green}✅ Successfully created $PROJECT app"
   else
-    echo "Project $PROJECT already found, skipping app creation"
+    echo "\n\n${blue} ✅ Project $PROJECT already found, skipping app creation\n\n"
   fi
 
   IP=$(hostname -I | cut -d " " -f 1)
 
   echo
   case $CONNECTION in
-        port )
-          read -p "Specify the port you wish to expose: " PORT
-          dokku proxy:ports-add $PROJECT http:$PORT:3306
-          echo "All set! You can acces your app at $IP:$PORT"
+        ip )
+          echo "\n\n${green}✅ All set! You can acces your app at $IP\n\n"
           ;;
         domain )
           read -p "Specify the domain you would like to use (i.e.: your.domain.com): " DOMAIN
           dokku domains:add $PROJECT $DOMAIN
-          echo "All set! You can acces your app at $DOMAIN"
+          echo "\n\n${green}✅ All set! You can acces your app at $DOMAIN\n\n"
           ;;
         ssl )
           read -p "Specify the domain you would like to use and make sure the A record is set (i.e.: your.domain.com): " DOMAIN
@@ -76,9 +79,9 @@ runFormula() {
           dokku config:set --no-restart $PROJECT DOKKU_LETSENCRYPT_EMAIL=$EMAIL
           dokku letsencrypt $PROJECT
           dokku letsencrypt:cron-job --add
-          echo "All set! You can acces your https app at $DOMAIN"
+          echo "\n\n${green}✅ All set! You can acces your https app at $DOMAIN\n\n"
           ;;
   esac
 
-  printf "\nWARNING: if this is your first time setting up, you should visit $IP to set your ssh keys and prevent your machine from being exposed\n\n"
+  printf "\n\n${yellow}WARNING: if this is your first time setting up, you should visit $IP to set your ssh keys and prevent your machine from being exposed\n\n"
 }
