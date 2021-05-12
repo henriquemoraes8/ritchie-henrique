@@ -76,9 +76,7 @@ runFormula() {
           dokku domains:clear $PROJECT
           dokku domains:add $PROJECT $DOMAIN
 
-          if ! dokku letsencrypt > /dev/null 2>&1; then
-            sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
-          fi
+          sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
 
           dokku config:set --no-restart $PROJECT DOKKU_LETSENCRYPT_EMAIL=$EMAIL
           dokku letsencrypt $PROJECT
