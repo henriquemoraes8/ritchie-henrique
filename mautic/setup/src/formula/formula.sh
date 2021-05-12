@@ -79,7 +79,7 @@ runFormula() {
           sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
 
           dokku config:set --no-restart $PROJECT DOKKU_LETSENCRYPT_EMAIL=$EMAIL
-          dokku letsencrypt $PROJECT
+          dokku letsencrypt:enable $PROJECT
           dokku letsencrypt:cron-job --add
           printf "\n\n${green}✅ All set! You can acces your https app at $DOMAIN${white}\n\n"
           ;;
